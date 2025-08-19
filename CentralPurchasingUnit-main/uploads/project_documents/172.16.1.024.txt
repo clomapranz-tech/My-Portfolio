@@ -1,0 +1,45 @@
+172.16.1.0/24
+
+LAN 1 - 60 host /26 (.192)
+LAN 2 - 20 host /27 (.224)
+
+R1 G0/0/1 172.16.1.0/26
+R1 G0/0/0 172.16.1.64/27
+
+S1 SVI 172.16.1.2 255.255.255.192
+
+PC-A Network Configuration
+IPv4 Address	172.16.1.62
+Subnet Mask	255.255.255.192
+IPv4 Default Gateway	172.16.1.1
+
+PC-B Network Configuration
+IPv4 Address	172.16.1.94
+Subnet Mask	255.255.255.224
+IPv4 Default Gateway	172.16.1.65
+
+interface g0/0/0
+description Connect to Subnet B
+ip address 172.16.1.65 255.255.255.224
+no shutdown 
+exit
+
+interface g0/0/1
+description Connect to Subnet A
+ip address 172.16.1.1 255.255.255.192
+no shutdown
+
+security passwords min-length 10
+ip domain-name netsec.com
+username netadmin secret Ci$co12345
+
+line vty 0 15
+transport input ssh
+login local
+exit
+
+crypto key generate rsa
+
+int range f0/1 - 4, f0/7 - 24, g0/1 - 2
+description Unused switch ports
+shutdown
